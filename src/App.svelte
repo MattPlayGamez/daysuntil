@@ -100,10 +100,10 @@
 <main>
     <h1>🎒 School Countdown</h1>
 
-    <section class="date-picker">
-        <label>Today:</label>
-        <input type="date" bind:value={todayHTML} />
-    </section>
+<!--    <section class="date-picker">-->
+        <h3 class="date-picker" >Vandaag: {todayHTML}</h3>
+<!--        <input type="date" bind:value={todayHTML} />-->
+<!--    </section>-->
 
     <section class="cards">
         <div class="card next-vacation">
