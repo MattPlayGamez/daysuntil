@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Herfstvakantie",
+    "start": "2025-10-27",
+    "end": "2025-11-02"
+  },
+  {
+    "name": "Wapenstilstand",
+    "start": "2025-11-11",
+    "end": "2025-11-11"
+  },
+  {
+    "name": "Kerstvakantie",
+    "start": "2025-12-22",
+    "end": "2026-01-04"
+  },
+  {
+    "name": "Krokusvakantie",
+    "start": "2026-02-16",
+    "end": "2026-02-22"
+  },
+  {
+    "name": "Paasvakantie",
+    "start": "2026-04-06",
+    "end": "2026-04-19"
+  },
+  {
+    "name": "Dag van de Arbeid",
+    "start": "2026-05-01",
+    "end": "2026-05-01"
+  },
+  {
+    "name": "Hemelvaart",
+    "start": "2026-05-14",
+    "end": "2026-05-15"
+  },
+  {
+    "name": "Pinkstermaandag",
+    "start": "2026-05-25",
+    "end": "2026-05-25"
+  },
+  {
+    "name": "Zomervakantie",
+    "start": "2026-07-01",
+    "end": "2026-08-31"
+  }
+]
