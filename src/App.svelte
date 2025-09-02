@@ -98,7 +98,7 @@
 </script>
 
 <main>
-    <h1>🎒 School Countdown</h1>
+    <h1>🎒 School Aftellen</h1>
 
 <!--    <section class="date-picker">-->
         <h3 class="date-picker" >Vandaag: {todayHTML}</h3>
@@ -107,20 +107,20 @@
 
     <section class="cards">
         <div class="card next-vacation">
-            <h2>Next Vacation</h2>
+            <h2>Volgende vakantie</h2>
             <p class="vac-name">{nextVacation.nextVacation.name}</p>
-            <p>Days remaining: <span>{nextVacation.nogTeDoen}</span></p>
-            <p>Elapsed: <span>{nextVacation.elapsed}</span> days</p>
+            <p>Resterende dagen: <span>{nextVacation.nogTeDoen}</span></p>
+            <p>Verstreken: <span>{nextVacation.elapsed}</span> days</p>
             <div class="progress">
                 <div class="bar" style="width:{nextVacation.procent}%"></div>
             </div>
-            <p>Progress: {nextVacation.procent}%</p>
+            <p>Voorgang: {nextVacation.procent}%</p>
         </div>
 
         <div class="card end-year">
             <h2>End of School Year</h2>
-            <p>Days remaining: <span>{manager.endOfSchoolYear().nogTeDoen}</span></p>
-            <p>Progress: {manager.endOfSchoolYear().procent}%</p>
+            <p>Verstreken dagen: <span>{manager.endOfSchoolYear().nogTeDoen}</span></p>
+            <p>Voortgang: {manager.endOfSchoolYear().procent}%</p>
             <div class="progress">
                 <div class="bar" style="width:{manager.endOfSchoolYear().procent}%"></div>
             </div>
@@ -128,21 +128,24 @@
     </section>
 
     <section class="add-vacation">
-        <h2>Add Custom Vacation</h2>
+        <h2>Voeg een eigen vakantie toe</h2>
         <div class="form">
-            <input placeholder="Vacation Name" bind:value={newName} />
+            <input placeholder="Naam Vakantie" bind:value={newName} />
             <div class="date-inputs">
                 <label>Start:</label>
                 <input type="date" bind:value={newStart} />
-                <label>End:</label>
-                <input type="date" bind:value={newEnd} />
+                <div>
+                <label>Einde:</label>
+                    <input type="date" bind:value={newEnd} />
+
+                </div>
             </div>
         </div>
-        <button on:click={addCustomVacation}>Add Vacation</button>
+        <button on:click={addCustomVacation}>Voeg toe</button>
     </section>
 
     <section class="upcoming-vacations">
-        <h2>Upcoming Vacations</h2>
+        <h2>Aankomende vakanties</h2>
         <ul>
             {#each vacationList as v}
                 <li class="{v.custom ? 'custom' : ''}">
