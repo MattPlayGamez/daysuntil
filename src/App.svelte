@@ -2,100 +2,99 @@
     import vacationData from "./assets/vacations.json";
 
     let today = new Date();
-    let todayHTML = today.toISOString().split('T')[0];
+    let todayHTML = today.toISOString().split("T")[0];
+    $: today = new Date(todayHTML);
 
-    // Load custom vacations from localStorage
-    let customVacations = JSON.parse(localStorage.getItem('customVacations') || '[]');
+    let customVacations = JSON.parse(localStorage.getItem("customVacations") || "[]");
 
-    // Combine built-in + custom vacations
-    let vacationList = [...vacationData, ...customVacations].map(v => ({
-        ...v,
-        start: new Date(v.start),
-        end: new Date(v.end)
-    }));
+    function buildVacationList() {
+        return [...vacationData, ...customVacations].map(v => ({
+            ...v,
+            start: new Date(v.start),
+            end: new Date(v.end),
+        })).sort((a, b) => a.start - b.start);
+    }
 
-    const sortVacations = () => {
-        vacationList.sort((a, b) => a.start - b.start);
-    };
+    let vacationList = buildVacationList();
 
-    sortVacations();
-
-    let firstDayOfSeptember = new Date(today.getFullYear(), 8, 1);
-    let eersteSchoolDag = firstDayOfSeptember;
-    let firstDay = firstDayOfSeptember.getDay();
-    if (firstDay === 0) eersteSchoolDag.setDate(firstDayOfSeptember.getDate() + 1);
-    if (firstDay === 5) eersteSchoolDag.setDate(firstDayOfSeptember.getDate() + 2);
+    function calcFirstSchoolDay(year) {
+        let d = new Date(year, 8, 1); // 1 Sept
+        if (d.getDay() === 0) d.setDate(2); // Sunday → Monday
+        if (d.getDay() === 6) d.setDate(3); // Saturday → Monday
+        return d;
+    }
+    $: eersteSchoolDag = calcFirstSchoolDay(today.getFullYear());
 
     class Vacation {
-        constructor(listOfDates, firstSchoolDay) {
+        constructor(list, firstSchoolDay) {
             this.firstSchoolDay = firstSchoolDay;
-            this.vacationList = listOfDates.filter(v => v.start >= today);
+            this.vacationList = list.filter(v => v.end >= today);
         }
 
         nextVacation() {
-            let next = this.vacationList[0];
-            let nogTeDoen = this.daysToDo(today, next.start);
-            let elapsed = this.elapsedDays(today, this.firstSchoolDay);
-            return { nextVacation: next, nogTeDoen, elapsed, procent: this.percentage(elapsed, nogTeDoen) };
+            let next = this.vacationList.find(v => v.start >= today);
+            if (!next) return null;
+            let nogTeDoen = this.daysBetween(today, next.start); // dagen tot vakantie
+            let elapsed = this.daysBetween(this.firstSchoolDay, today) + 1; // vandaag ook tellen
+            return {
+                nextVacation: next,
+                nogTeDoen,
+                elapsed,
+                procent: this.percentage(elapsed, nogTeDoen),
+            };
         }
 
         endOfSchoolYear() {
-            let zomer = this.vacationList.find(v => v.name.includes("Zomer")).start;
-            let elapsed = this.elapsedDays(today, this.firstSchoolDay);
-            let nogTeDoen = this.daysToDo(today, zomer);
-            return { elapsed, nogTeDoen, procent: this.percentage(elapsed, nogTeDoen) };
+            let zomer = this.vacationList.find(v => v.name.includes("Zomer"));
+            if (!zomer) return null;
+            let elapsed = this.daysBetween(this.firstSchoolDay, today) + 1; // vandaag ook tellen
+            let nogTeDoen = this.daysBetween(today, zomer.start);
+            return {
+                elapsed,
+                nogTeDoen,
+                procent: this.percentage(elapsed, nogTeDoen),
+            };
         }
 
-        elapsedDays(a, b) { return Math.floor((a - b) / 1000 / 60 / 60 / 24) + 1; }
-        daysToDo(a, b) { return Math.floor((b - a) / 1000 / 60 / 60 / 24); }
-        percentage(a, b) { return ((a / (a + b)) * 100).toFixed(2); }
+        daysBetween(a, b) {
+            return Math.max(0, Math.floor((b - a) / 86400000));
+        }
+        percentage(a, b) {
+            return ((a / (a + b)) * 100).toFixed(2);
+        }
     }
 
-    let manager = new Vacation(vacationList, eersteSchoolDag);
-    let nextVacation = manager.nextVacation();
-    $: today = new Date(todayHTML);
-    $: nextVacation = manager.nextVacation();
 
-    // Custom vacation inputs
-    let newName = '';
-    let newStart = '';
-    let newEnd = '';
+    $: manager = new Vacation(vacationList, eersteSchoolDag);
+    $: nextVacation = manager.nextVacation();
+    $: endYear = manager.endOfSchoolYear();
+
+    // --- Custom vacation handlers ---
+    let newName = "";
+    let newStart = "";
+    let newEnd = "";
 
     function addCustomVacation() {
-        if (!newName || !newStart || !newEnd) return
-        let id = Math.floor(Math.random()*1000000)
-        alert(id)
-        const newVac = { name: newName, id: id, start: newStart, end: newEnd, custom: true };
-        customVacations.push(newVac);
-        localStorage.setItem('customVacations', JSON.stringify(customVacations));
-        vacationList = [...vacationData, ...customVacations].map(v => ({
-            ...v,
-            start: new Date(v.start),
-            end: new Date(v.end)
-        }));
-        sortVacations();
-        manager = new Vacation(vacationList, eersteSchoolDag);
-        nextVacation = manager.nextVacation();
-        newName = newStart = newEnd = '';
+        if (!newName || !newStart || !newEnd) return;
+        let id = Date.now();
+        const newVac = { name: newName, id, start: newStart, end: newEnd, custom: true };
+        customVacations = [...customVacations, newVac];
+        localStorage.setItem("customVacations", JSON.stringify(customVacations));
+        vacationList = buildVacationList();
+        newName = newStart = newEnd = "";
     }
 
     function deleteCustomVacation(id) {
         customVacations = customVacations.filter(v => v.id !== id);
-        localStorage.setItem('customVacations', JSON.stringify(customVacations));
-        vacationList = [...vacationData, ...customVacations].map(v => ({
-            ...v,
-            start: new Date(v.start),
-            end: new Date(v.end)
-        }));
-        sortVacations();
-        manager = new Vacation(vacationList, eersteSchoolDag);
-        nextVacation = manager.nextVacation();
+        localStorage.setItem("customVacations", JSON.stringify(customVacations));
+        vacationList = buildVacationList();
     }
 
     function formatDate(d) {
-        return (d instanceof Date ? d : new Date(d)).toISOString().split('T')[0];
+        return (d instanceof Date ? d : new Date(d)).toISOString().split("T")[0];
     }
 </script>
+
 
 <main>
     <h1>🎒 School Aftellen</h1>
