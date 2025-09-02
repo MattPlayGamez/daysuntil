@@ -111,13 +111,14 @@
             <p>Resterende dagen: <span>{nextVacation.nogTeDoen}</span></p>
             <p>Verstreken: <span>{nextVacation.elapsed}</span> days</p>
             <div class="progress">
-                <div class="bar" style="width:{nextVacation.procent}%"></div>
+                <div class="bar" style="--progress:{endYear?.procent || 0}%"></div>
             </div>
+
             <p>Voorgang: {nextVacation.procent}%</p>
         </div>
 
         <div class="card end-year">
-            <h2>End of School Year</h2>
+            <h2>Einde van schooljaar</h2>
             <p>Verstreken dagen: <span>{manager.endOfSchoolYear().nogTeDoen}</span></p>
             <p>Voortgang: {manager.endOfSchoolYear().procent}%</p>
             <div class="progress">
@@ -236,9 +237,10 @@
         height: 100%;
         background: linear-gradient(90deg, #ff6b6b, #ffb347);
         border-radius: 6px;
-        width: 0;
-        animation: fill 1s ease forwards;
+        width: var(--progress, 0);
+        transition: width 0.6s ease; /* smooth animation on change */
     }
+
 
     @keyframes fill {
         from { width: 0; }
