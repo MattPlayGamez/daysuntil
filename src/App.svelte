@@ -119,7 +119,7 @@
 
         <div class="card end-year">
             <h2>Einde van schooljaar</h2>
-            <p>Verstreken dagen: <span>{manager.endOfSchoolYear().nogTeDoen}</span></p>
+            <p>Resterende dagen: <span>{manager.endOfSchoolYear().nogTeDoen}</span></p>
             <p>Voortgang: {manager.endOfSchoolYear().procent}%</p>
             <div class="progress">
                 <div class="bar" style="width:{manager.endOfSchoolYear().procent}%"></div>
@@ -238,7 +238,7 @@
         background: linear-gradient(90deg, #ff6b6b, #ffb347);
         border-radius: 6px;
         width: var(--progress, 0);
-        transition: width 0.6s ease; /* smooth animation on change */
+        transition: width 0.6s ease;
     }
 
 
