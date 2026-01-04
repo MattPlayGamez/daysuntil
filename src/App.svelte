@@ -27,24 +27,52 @@
     if (d.getDay() === 6) d.setDate(3); // Saturday → Monday
     return d;
   }
-  $: eersteSchoolDag = calcFirstSchoolDay(today.getFullYear());
+  $: eersteSchoolDag =
+    today.getMonth() >= 8
+      ? calcFirstSchoolDay(today.getFullYear())
+      : calcFirstSchoolDay(today.getFullYear() - 1);
 
   class Vacation {
     constructor(list, firstSchoolDay) {
       this.firstSchoolDay = firstSchoolDay;
-      this.vacationList = list.filter((v) => v.end >= today);
+      this.vacationList = list;
     }
 
     nextVacation() {
       let next = this.vacationList.find((v) => v.start >= today);
       if (!next) return null;
-      let nogTeDoen = this.daysBetween(today, next.start); // dagen tot vakantie
-      let elapsed = this.daysBetween(this.firstSchoolDay, today) + 1; // vandaag ook tellen
+
+      let nogTeDoen = this.daysBetween(today, next.start);
+
+      let lastVac = this.lastVacationEnd();
+
+      let startCountFrom = lastVac
+        ? lastVac.dayAfterVacation
+        : this.firstSchoolDay;
+
+      let elapsed = this.daysBetween(startCountFrom, today) + 1;
+
       return {
         nextVacation: next,
         nogTeDoen,
         elapsed,
         procent: this.percentage(elapsed, nogTeDoen),
+      };
+    }
+
+    lastVacationEnd() {
+      let last = [...this.vacationList]
+        .filter((v) => v.end <= today) // ← inclusive
+        .sort((a, b) => b.end - a.end)[0];
+
+      if (!last) return null;
+
+      let dayAfterVacation = new Date(last.end);
+      dayAfterVacation.setDate(dayAfterVacation.getDate() + 1);
+
+      return {
+        lastVacation: last,
+        dayAfterVacation,
       };
     }
 
@@ -70,6 +98,7 @@
 
   $: manager = new Vacation(vacationList, eersteSchoolDag);
   $: nextVacation = manager.nextVacation();
+  $: lastVacation = manager.lastVacationEnd();
   $: endYear = manager.endOfSchoolYear();
 
   // --- Custom vacation handlers ---
