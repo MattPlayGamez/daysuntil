@@ -50,7 +50,7 @@
         ? lastVac.dayAfterVacation
         : this.firstSchoolDay;
 
-      let elapsed = this.daysBetween(startCountFrom, today) + 1;
+      let elapsed = this.daysBetween(startCountFrom, today);
 
       return {
         nextVacation: next,
