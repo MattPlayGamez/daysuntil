@@ -145,7 +145,7 @@
     <div class="card next-vacation">
       <h2>Volgende vakantie</h2>
       <p class="vac-name">{nextVacation.nextVacation.name}</p>
-      <p>Resterende dagen: <span>{nextVacation.nogTeDoen}</span></p>
+      <p>Resterende dagen: <span><b>{nextVacation.nogTeDoen}</b></span></p>
       <p>Verstreken: <span>{nextVacation.elapsed}</span> days</p>
       <div class="progress">
         <div class="bar" style="--progress:{nextVacation.procent || 0}%"></div>
@@ -157,7 +157,7 @@
     <div class="card end-year">
       <h2>Einde van schooljaar</h2>
       <p>
-        Resterende dagen: <span>{manager.endOfSchoolYear().nogTeDoen}</span>
+        Resterende dagen: <span><b>{manager.endOfSchoolYear().nogTeDoen}</b></span>
       </p>
       <p>Voortgang: {manager.endOfSchoolYear().procent}%</p>
       <div class="progress">
